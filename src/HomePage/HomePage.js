@@ -1,6 +1,46 @@
 import React from 'react';
+import axios from 'axios';
+import Chart from 'chart.js';
+
+const dataSource = {
+  datasets: [
+      {
+          data: [1,2,3,4,5],
+          backgroundColor: [
+              '#0048BA',
+              '#FFBF00',
+              '#008000',
+              '#660000',
+              '#004225',
+              '#58427C',
+              '#FF8C00'
+            ],
+      }],
+        labels: [
+          'label1',
+          'label2'
+]};
+
+function createChart() {
+  var ctx = document.getElementById("myChart").getContext("2d");
+  var myPieChart = new Chart(ctx, {
+      type: 'pie',
+      data: dataSource
+  });
+}
 
 function HomePage() {
+
+    axios.get('/budget.json')
+    .then(res => {
+        console.log(res.data);
+         for (var i = 0; i < res.data.myBudget.length; i++) {
+            dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
+            dataSource.labels[i] = res.data.myBudget[i].title;
+        }
+        createChart();
+    });
+
   return (
         <main className="center" id="main">
             <div className="page-area">
@@ -72,7 +112,10 @@ function HomePage() {
                     <div className="text-box">
                         <h1>Chart</h1>
                         <p>
-                            <canvas id="myChart" width="400" height="400"></canvas>
+                            <canvas
+                               id="myChart" 
+                               width="400" height="400">
+                            </canvas>
                         </p>
                     </div>
                 </article>
